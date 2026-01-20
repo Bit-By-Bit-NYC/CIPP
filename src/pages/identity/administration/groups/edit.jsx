@@ -52,21 +52,18 @@ const EditGroup = () => {
     if (groupInfo.isSuccess) {
       const group = groupInfo.data?.groupInfo;
       if (group) {
-        // Create combined data for the table - Added Array checks here as well for safety
-        const ownersList = Array.isArray(groupInfo.data?.owners) ? groupInfo.data.owners : [];
-        const membersList = Array.isArray(groupInfo.data?.members) ? groupInfo.data.members : [];
-
+        // Create combined data for the table
         const combinedData = [
-          ...ownersList.map((o) => ({
+          ...(groupInfo.data?.owners?.map((o) => ({
             type: "Owner",
             userPrincipalName: o.userPrincipalName,
             displayName: o.displayName,
-          })),
-          ...membersList.map((m) => ({
+          })) || []),
+          ...(groupInfo.data?.members?.map((m) => ({
             type: m?.["@odata.type"] === "#microsoft.graph.orgContact" ? "Contact" : "Member",
             userPrincipalName: m.userPrincipalName ?? m.mail,
             displayName: m.displayName,
-          })),
+          })) || []),
         ];
         setCombinedData(combinedData);
 
@@ -321,9 +318,9 @@ const EditGroup = () => {
                   isFetching={groupInfo.isFetching}
                   disabled={groupInfo.isFetching}
                   options={
-                    (Array.isArray(groupInfo.data?.members) ? groupInfo.data.members : [])
-                      .filter((m) => m?.["@odata.type"] !== "#microsoft.graph.orgContact")
-                      .map((m) => ({
+                    groupInfo.data?.members
+                      ?.filter((m) => m?.["@odata.type"] !== "#microsoft.graph.orgContact")
+                      ?.map((m) => ({
                         label: `${m.displayName} (${m.userPrincipalName})`,
                         value: m.id,
                         addedFields: {
@@ -331,7 +328,7 @@ const EditGroup = () => {
                           displayName: m.displayName,
                           id: m.id,
                         },
-                      }))
+                      })) || []
                   }
                   sortOptions={true}
                 />
@@ -347,16 +344,15 @@ const EditGroup = () => {
                   isFetching={groupInfo.isFetching}
                   disabled={groupInfo.isFetching}
                   options={
-                    (Array.isArray(groupInfo.data?.owners) ? groupInfo.data.owners : [])
-                      .map((o) => ({
-                        label: `${o.displayName} (${o.userPrincipalName})`,
-                        value: o.id,
-                        addedFields: {
-                          userPrincipalName: o.userPrincipalName,
-                          displayName: o.displayName,
-                          id: o.id,
-                        },
-                      }))
+                    groupInfo.data?.owners?.map((o) => ({
+                      label: `${o.displayName} (${o.userPrincipalName})`,
+                      value: o.id,
+                      addedFields: {
+                        userPrincipalName: o.userPrincipalName,
+                        displayName: o.displayName,
+                        id: o.id,
+                      },
+                    })) || []
                   }
                   sortOptions={true}
                 />
@@ -372,13 +368,13 @@ const EditGroup = () => {
                   isFetching={groupInfo.isFetching}
                   disabled={groupInfo.isFetching}
                   options={
-                    (Array.isArray(groupInfo.data?.members) ? groupInfo.data.members : [])
-                      .filter((m) => m?.["@odata.type"] === "#microsoft.graph.orgContact")
-                      .map((m) => ({
+                    groupInfo.data?.members
+                      ?.filter((m) => m?.["@odata.type"] === "#microsoft.graph.orgContact")
+                      ?.map((m) => ({
                         label: `${m.displayName} (${m.mail})`,
                         value: m.mail,
                         addedFields: { id: m.id },
-                      }))
+                      })) || []
                   }
                   sortOptions={true}
                 />
