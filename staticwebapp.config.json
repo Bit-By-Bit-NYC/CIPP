@@ -20,7 +20,7 @@
     },
     {
       "route": "/login",
-      "rewrite": "/.auth/login/aad"
+      "redirect": "/.auth/login/aad?prompt=select_account"
     },
     {
       "route": "/.auth/login/twitter",
@@ -70,7 +70,7 @@
   },
   "responseOverrides": {
     "401": {
-      "redirect": "/.auth/login/aad?post_login_redirect_uri=.referrer",
+      "redirect": "/.auth/login/aad?prompt=select_account&post_login_redirect_uri=.referrer",
       "statusCode": 302,
       "exclude": ["/assets/illustrations/*.{png,jpg,gif}", "/css/*"]
     },
@@ -85,13 +85,13 @@
     "content-security-policy": "default-src https: blob: 'unsafe-eval' 'unsafe-inline'; object-src 'self' blob:; img-src 'self' blob: data: *"
   },
   "mimeTypes": {
-    ".json": "text/json"
+    "text/json": ".json"
   },
   "networking": {
     "allowedIpRanges": [
       "20.62.97.218/32",
       "172.177.129.131/32",
       "172.174.6.76/32"
-  ]
+    ]
   }
 }
